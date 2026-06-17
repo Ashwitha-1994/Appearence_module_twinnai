@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Twin Appearance Module</title>
+
+    <style>
+
+        body{
+            font-family: Arial;
+            margin:40px;
+        }
+
+        .card{
+            width:500px;
+            border:1px solid #ddd;
+            padding:20px;
+            border-radius:10px;
+        }
+
+        img{
+            width:300px;
+            margin-top:20px;
+        }
+
+        button{
+            padding:10px;
+            margin-top:10px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Appearance Module</h2>
+
+<input
+    type="file"
+    id="fileInput"
+/>
+
+<br>
+
+<button onclick="uploadFile()">
+Upload Photo / Video
+</button>
+
+<p id="status"></p>
+
+<img
+    id="preview"
+    style="display:none"
+/>
+
+</div>
+
+<script>
+
+async function uploadFile(){
+
+    const file =
+        document.getElementById(
+            "fileInput"
+        ).files[0];
+
+    if(!file){
+
+        alert(
+            "Please select a file"
+        );
+
+        return;
+    }
+
+    const formData =
+        new FormData();
+
+    formData.append(
+        "user_id",
+        "123"
+    );
+
+    formData.append(
+        "file",
+        file
+    );
+
+    document
+        .getElementById(
+            "status"
+        ).innerHTML =
+        "Uploading...";
+
+    try{
+
+        const response =
+            await fetch(
+                "http://127.0.0.1:8000/appearance/upload",
+                {
+                    method:"POST",
+                    body:formData
+                }
+            );
+
+        const data =
+            await response.json();
+
+        console.log(data);
+
+        document
+            .getElementById(
+                "status"
+            ).innerHTML =
+            "Upload Success";
+
+        if(data.preview_url){
+
+            const img =
+                document.getElementById(
+                    "preview"
+                );
+
+            img.src =
+                data.preview_url;
+
+            img.style.display =
+                "block";
+        }
+
+    }
+
+    catch(error){
+
+        console.log(error);
+
+        document
+            .getElementById(
+                "status"
+            ).innerHTML =
+            "Upload Failed";
+    }
+
+}
+
+</script>
+
+</body>
+</html>
